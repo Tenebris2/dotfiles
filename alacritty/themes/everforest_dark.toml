@@ -1,0 +1,28 @@
+# Colors (Everforest Dark - Customized)
+
+# Default colors
+[colors.primary]
+background = '#2d353b'
+foreground = '#d3c6aa'  # dark.fg
+
+# Normal colors
+[colors.normal]
+black   = '#7a8478'  # dark.grey0
+red     = '#e67e80'  # dark.red
+green   = '#a7c080'  # dark.green
+yellow  = '#dbbc7f'  # dark.yellow
+blue    = '#7fbbb3'  # dark.blue
+magenta = '#d699b6'  # dark.purple
+cyan    = '#83c092'  # dark.aqua
+white   = '#d3c6aa'  # dark.fg
+
+# Bright colors
+[colors.bright]
+black   = '#859289'  # dark.grey1
+red     = '#e67e80'  # dark.red
+green   = '#a7c080'  # dark.green
+yellow  = '#dbbc7f'  # dark.yellow
+blue    = '#7fbbb3'  # dark.blue
+magenta = '#d699b6'  # dark.purple
+cyan    = '#83c092'  # dark.aqua
+white   = '#d3c6aa'  # dark.fg

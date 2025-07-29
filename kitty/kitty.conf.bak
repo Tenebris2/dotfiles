@@ -1,0 +1,11 @@
+include ./theme.conf
+include ./font.conf
+include ./keybindings.conf
+include ./tabs.conf
+
+
+
+# BEGIN_KITTY_THEME
+# Catppuccin-Mocha
+include current-theme.conf
+# END_KITTY_THEME
