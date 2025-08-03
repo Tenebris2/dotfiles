@@ -297,7 +297,11 @@ require("lazy").setup({
   --
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
-
+  {
+    "chentoast/marks.nvim",
+    event = "VeryLazy",
+    opts = {},
+  },
   { -- Useful plugin to show you pending keybinds.
     "folke/which-key.nvim",
     event = "VimEnter", -- Sets the loading event to 'VimEnter'
@@ -378,7 +382,17 @@ require("lazy").setup({
         end,
       },
       { "nvim-telescope/telescope-ui-select.nvim" },
-
+      {
+        "nvim-tree/nvim-tree.lua",
+        version = "*",
+        lazy = false,
+        dependencies = {
+          "nvim-tree/nvim-web-devicons", -- optional, for file icons
+        },
+        config = function()
+          require("nvim-tree").setup {}
+        end,
+      },
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
     },
@@ -430,7 +444,7 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
       vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
       vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "[S]earch [F]iles" })
-      vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+      vim.keymap.set("n", "<leader>s;", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
       vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
       vim.keymap.set("n", "<leader>fw", builtin.live_grep, { desc = "[S]earch by [G]rep" })
       vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
@@ -439,7 +453,7 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set("n", "<leader>sc", function()
+      vim.keymap.set("n", "<leader>ss", function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown {
           winblend = 10,
@@ -840,7 +854,23 @@ require("lazy").setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = "default",
+        ["<CR>"] = { "select_and_accept", "fallback" },
+        ["<Up>"] = { "select_prev", "fallback" },
+        ["<Down>"] = { "select_next", "fallback" },
+        ["<S-Tab>"] = { "select_prev", "fallback_to_mappings" },
+        ["<Tab>"] = { "select_next", "fallback_to_mappings" },
 
+        -- disable a keymap from the preset
+        ["<C-e>"] = false, -- or {}
+
+        -- show with a list of providers
+        ["<C-space>"] = {
+          function(cmp)
+            cmp.show { providers = { "snippets" } }
+          end,
+        },
+
+        -- control whether the next command will be run when using a function
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
@@ -903,6 +933,18 @@ require("lazy").setup({
   },
   {
     "numToStr/Comment.nvim",
+    opts = {
+      toggler = {
+        line = "<Leader>/", -- toggles linewise comment in NORMAL mode
+      },
+      opleader = {
+        line = "<Leader>/", -- toggles in VISUAL mode
+      },
+      mappings = {
+        basic = true,
+        extra = false,
+      },
+    },
     enabled = true,
   },
   {
@@ -1045,8 +1087,13 @@ require("lazy").setup({
       },
     },
   },
+  -- { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  -- { "shaunsingh/seoul256.nvim", name = "seoul256", priority = 1000 },
+  -- { "loctvl842/monokai-pro.nvim", name = "monokai", priority = 1000 },
+  { "shaunsingh/nord.nvim", name = "nord", priority = 1000 },
+  -- { "projekt0n/github-nvim-theme", name = "github-theme", priority = 1000 },
+  -- { "marko-cerovac/material.nvim", name = "material", priority = 1000 },
   { "neanias/everforest-nvim", name = "everforest", priority = 1000 },
-  --
   -- Highlight todo, notes, etc in comments
   {
     "folke/todo-comments.nvim",
@@ -1186,7 +1233,7 @@ require("lazy").setup({
 vim.opt.relativenumber = true
 vim.opt.termguicolors = true
 vim.g.neovide_hide_mouse_when_typing = true
-vim.g.neovide_transparency = 0.8
+vim.g.neovide_transparency = 0.7
 
 -- disable lsp if discharging (not charging laptop)
 
@@ -1194,18 +1241,31 @@ require("everforest").setup {
   background = "hard",
   transparent_background_level = 0,
   italics = true,
+  disable_italic_comments = false, -- enable italics *for* comments
+  on_highlights = function(hl, palette)
+    -- The default highlights for TSBoolean is linked to `Purple` which is fg
+    -- purple and bg none. If we want to just add a bold style to the existing,
+    -- we need to have the existing *and* the bold style. (We could link to
+    -- `PurpleBold` here otherwise.)
+    hl["@boolean"] = { fg = palette.purple, bg = palette.none, bold = true }
+    hl["@function"] = { italic = true }
+    hl["@function.method"] = { italic = true }
+    hl["@keyword"] = { italic = true }
+  end,
 }
-vim.cmd [[colorscheme everforest]]
+
+vim.cmd [[colorscheme nord]]
 -- vim.cmd.colorscheme "catppuccin"
 -- vim.cmd [[colorscheme kanagawa-dragon]]
 --
 vim.api.nvim_set_keymap("n", "x", '"_x', { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "x", '"_x', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<C-l>", ":Telescope lsp_document_symbols<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>fl", ":Telescope lsp_document_symbols<CR>", { noremap = true, silent = true })
-
+vim.api.nvim_set_keymap("n", "gh", ":lua vim.lsp.buf.hover()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-s>", "<cmd>w<CR>", { desc = "general save file" })
 vim.api.nvim_set_keymap("n", "<C-c>", "<cmd>%y+<CR>", { desc = "general copy whole file" })
+vim.api.nvim_set_keymap("n", "<C-n>", ":NvimTreeToggle<CR>", { desc = "general copy whole file" })
+vim.api.nvim_set_keymap("n", "<Leader>fe", ":lua vim.diagnostic.open_float()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap(
   "n",
   "<Leader>fr",
