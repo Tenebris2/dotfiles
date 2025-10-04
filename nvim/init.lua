@@ -150,8 +150,7 @@ vim.o.splitbelow = true
 --   See `:help lua-options`
 --   and `:help lua-options-guide`
 vim.o.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
-
+vim.opt.expandtab = true
 -- Preview substitutions live, as you type!
 vim.o.inccommand = "split"
 
@@ -1274,3 +1273,17 @@ vim.api.nvim_set_keymap(
 )
 
 vim.api.nvim_set_keymap("n", "<Leader>o", ":Oil<CR>", { noremap = true, silent = true })
+-- Number of spaces a <Tab> counts for
+vim.opt.tabstop = 4
+
+-- Number of spaces to use for autoindent
+vim.opt.shiftwidth = 4
+
+-- Use spaces instead of tabs
+vim.opt.expandtab = true
+
+-- Smart autoindenting (based on syntax)
+vim.opt.smartindent = true
+
+-- Round indent to a multiple of 'shiftwidth'
+vim.opt.shiftround = true
