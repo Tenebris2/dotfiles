@@ -282,7 +282,23 @@ require("lazy").setup({
       },
     },
   },
-
+  {
+    "romgrk/barbar.nvim",
+    dependencies = {
+      "lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
+      "nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
+    },
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+    },
+    version = "^1.0.0", -- optional: only update when a new 1.x version is released
+  },
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
@@ -301,6 +317,7 @@ require("lazy").setup({
     event = "VeryLazy",
     opts = {},
   },
+  { "akinsho/toggleterm.nvim", version = "*", config = true },
   { -- Useful plugin to show you pending keybinds.
     "folke/which-key.nvim",
     event = "VimEnter", -- Sets the loading event to 'VimEnter'
@@ -449,7 +466,6 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
       vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
       vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set("n", "<leader>ss", function()
@@ -488,6 +504,12 @@ require("lazy").setup({
         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
       },
     },
+  },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
   },
   {
     -- Main LSP Configuration
@@ -551,27 +573,27 @@ require("lazy").setup({
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
-          map("grn", vim.lsp.buf.rename, "[R]e[n]ame")
+          map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map("gra", vim.lsp.buf.code_action, "[G]oto Code [A]ction", { "n", "x" })
+          map("ca", vim.lsp.buf.code_action, "[G]oto Code [A]ction", { "n", "x" })
 
           -- Find references for the word under your cursor.
-          map("grr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+          map("fr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map("gri", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+          map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map("grd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+          map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
-          map("grD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
+          map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
@@ -584,7 +606,7 @@ require("lazy").setup({
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map("grt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
+          map("gt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -1138,6 +1160,12 @@ require("lazy").setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+  {
+    "CRAG666/betterTerm.nvim",
+    opts = {
+      -- your options
+    },
+  },
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
@@ -1253,15 +1281,15 @@ require("everforest").setup {
   end,
 }
 
-vim.cmd [[colorscheme nord]]
 -- vim.cmd.colorscheme "catppuccin"
--- vim.cmd [[colorscheme kanagawa-dragon]]
+vim.cmd [[colorscheme kanagawa-dragon]]
 --
 vim.api.nvim_set_keymap("n", "x", '"_x', { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "x", '"_x', { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>fl", ":Telescope lsp_document_symbols<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "gh", ":lua vim.lsp.buf.hover()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<C-s>", "<cmd>w<CR>", { desc = "general save file" })
+-- vim.api.nvim_set_keymap("n", "<A-i>", ":ToggleTerm<CR>", { desc = "general save file" })
 vim.api.nvim_set_keymap("n", "<C-c>", "<cmd>%y+<CR>", { desc = "general copy whole file" })
 vim.api.nvim_set_keymap("n", "<C-n>", ":NvimTreeToggle<CR>", { desc = "general copy whole file" })
 vim.api.nvim_set_keymap("n", "<Leader>fe", ":lua vim.diagnostic.open_float()<CR>", { noremap = true, silent = true })
@@ -1271,7 +1299,26 @@ vim.api.nvim_set_keymap(
   ':lua require("telescope.builtin").lsp_references()<CR>',
   { noremap = true, silent = true }
 )
+local betterTerm = require "betterTerm"
 
+-- Toggle the first terminal (ID defaults to index_base, which is 0)
+vim.keymap.set({ "n", "t" }, "<C-`>", function()
+  betterTerm.open()
+end, { desc = "Toggle terminal" })
+
+-- Open a specific terminal
+vim.keymap.set({ "n", "t" }, "<C-/>", function()
+  betterTerm.open(1)
+end, { desc = "Toggle terminal 1" })
+
+-- Select a terminal to focus
+vim.keymap.set("n", "<leader>tt", betterTerm.select, { desc = "Select terminal" })
+
+-- Rename the current terminal
+vim.keymap.set("n", "<leader>tr", betterTerm.rename, { desc = "Rename terminal" })
+
+-- Toggle the tabs bar
+vim.keymap.set("n", "<leader>tb", betterTerm.toggle_tabs, { desc = "Toggle terminal tabs" })
 vim.api.nvim_set_keymap("n", "<Leader>o", ":Oil<CR>", { noremap = true, silent = true })
 -- Number of spaces a <Tab> counts for
 vim.opt.tabstop = 4
@@ -1287,3 +1334,12 @@ vim.opt.smartindent = true
 
 -- Round indent to a multiple of 'shiftwidth'
 vim.opt.shiftround = true
+-- In your init.lua
+local telescope_builtin = require "telescope.builtin"
+
+vim.keymap.set("n", "<tab><tab>", function()
+  telescope_builtin.buffers {
+    sort_mru = true, -- Sort by "Most Recently Used"
+    ignore_current_buffer = true, -- Don't include the current buffer
+  }
+end, { desc = "Switch buffers (MRU)" })
