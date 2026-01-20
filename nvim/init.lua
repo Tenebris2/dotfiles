@@ -317,6 +317,30 @@ require("lazy").setup({
     event = "VeryLazy",
     opts = {},
   },
+  {
+    "rachartier/tiny-code-action.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+      "ibhagwan/fzf-lua",
+      {
+        "folke/snacks.nvim",
+        opts = { terminal = {} },
+      },
+    },
+    event = "LspAttach",
+    opts = {
+      -- IMPORTANT: disable the default `ca` mapping
+      keymap = false,
+    },
+    config = function(_, opts)
+      require("tiny-code-action").setup(opts)
+
+      vim.keymap.set({ "n", "v" }, "<leader>ca", function()
+        require("tiny-code-action").code_action()
+      end, { desc = "Code Action" })
+    end,
+  },
   { "akinsho/toggleterm.nvim", version = "*", config = true },
   { -- Useful plugin to show you pending keybinds.
     "folke/which-key.nvim",
@@ -577,7 +601,7 @@ require("lazy").setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map("ca", vim.lsp.buf.code_action, "[G]oto Code [A]ction", { "n", "x" })
+          map("<leader>ca", vim.lsp.buf.code_action, "[G]oto Code [A]ction")
 
           -- Find references for the word under your cursor.
           map("fr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
@@ -1115,6 +1139,18 @@ require("lazy").setup({
   -- { "projekt0n/github-nvim-theme", name = "github-theme", priority = 1000 },
   -- { "marko-cerovac/material.nvim", name = "material", priority = 1000 },
   { "neanias/everforest-nvim", name = "everforest", priority = 1000 },
+  {
+    "vague-theme/vague.nvim",
+    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other plugins
+    config = function()
+      -- NOTE: you do not need to call setup if you don't want to.
+      require("vague").setup {
+        -- optional configuration here
+      }
+      vim.cmd "colorscheme vague"
+    end,
+  },
   -- Highlight todo, notes, etc in comments
   {
     "folke/todo-comments.nvim",
@@ -1132,14 +1168,13 @@ require("lazy").setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require("mini.ai").setup { n_lines = 500 }
+      -- require("mini.ai").setup { n_lines = 500 }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require("mini.surround").setup()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -1165,6 +1200,61 @@ require("lazy").setup({
     opts = {
       -- your options
     },
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equivalent to setup({}) function
+  },
+  {
+    "everviolet/nvim",
+    name = "evergarden",
+    priority = 1000, -- Colorscheme plugin is loaded first before any other plugins
+    opts = {
+      theme = {
+        variant = "fall", -- 'winter'|'fall'|'spring'|'summer'
+        accent = "green",
+      },
+      editor = {
+        transparent_background = false,
+        sign = { color = "none" },
+        float = {
+          color = "mantle",
+          solid_border = false,
+        },
+        completion = {
+          color = "surface0",
+        },
+      },
+    },
+  },
+  -- lazy.nvim
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      "MunifTanjim/nui.nvim",
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      "rcarriga/nvim-notify",
+    },
+  },
+  {
+    "nvimdev/dashboard-nvim",
+    event = "VimEnter",
+    config = function()
+      require("dashboard").setup {
+        -- config
+      }
+    end,
+    dependencies = { { "nvim-tree/nvim-web-devicons" } },
   },
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
@@ -1282,7 +1372,7 @@ require("everforest").setup {
 }
 
 -- vim.cmd.colorscheme "catppuccin"
-vim.cmd [[colorscheme kanagawa-dragon]]
+vim.cmd [[colorscheme vague]]
 --
 vim.api.nvim_set_keymap("n", "x", '"_x', { noremap = true, silent = true })
 vim.api.nvim_set_keymap("v", "x", '"_x', { noremap = true, silent = true })
@@ -1337,7 +1427,7 @@ vim.opt.shiftround = true
 -- In your init.lua
 local telescope_builtin = require "telescope.builtin"
 
-vim.keymap.set("n", "<tab><tab>", function()
+vim.keymap.set("n", "<leader><leader>", function()
   telescope_builtin.buffers {
     sort_mru = true, -- Sort by "Most Recently Used"
     ignore_current_buffer = true, -- Don't include the current buffer
